@@ -1,7 +1,10 @@
 #include "IdelThreadContainer.h"
 
+using namespace System::Thread;
+
 // Construct the IdelThreadContainer
-IdelThreadContainer::IdelThreadContainer(IThreadPool* pThreadPool, int threadNum):m_pThreadPool(pThreadPool),
+IdelThreadContainer::IdelThreadContainer(IThreadPool* pThreadPool, int threadNum):
+	m_pThreadPool(pThreadPool),
 	m_iThreadCnt(threadNum),
 	m_bDisposed(false)
 {
@@ -26,8 +29,6 @@ void IdelThreadContainer::Init()
 	{
 		MyThread* pThread = new MyThread(GetThreadPool());
 
-		pThread->SetId(index);
-
 		m_IdelTable.push_back(pThread);
 	}
 }
@@ -40,6 +41,9 @@ void IdelThreadContainer::Destory()
 		++Iter)
 	{
 		MyThread* pThread = *Iter;
+
+		// Force to exit the thread pool
+		pThread->SetIsExitThreadPool(true);
 
 		delete pThread;
 

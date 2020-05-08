@@ -14,54 +14,63 @@
 #include <list>
 #include "MyThread.h"
 
-class WorkThreadContainer
+namespace System
 {
-public:
-	// Construct the WorkThreadContainer
-	WorkThreadContainer();
-	
-	// Detructe the WorkThreadContainer
-	virtual ~WorkThreadContainer();
-	
-private:
-	// Forbid the copy WorkThreadContainer
-	WorkThreadContainer(const WorkThreadContainer& other)=delete;
-	
-	// Forbid the assigment of WorkThreadContainer
-	WorkThreadContainer& operator=(const WorkThreadContainer& other)=delete;
-	
-public:
-	// Add working thread
-	void Add(MyThread* pThread);
-
-	// Remove working thread
-	void Remove(MyThread* pThread);
-
-	// Size of container
-	int GetSize();
-
-	// Is empty
-	bool IsEmpty();
-
-private:
-	// Get the disposed status
-	inline bool GetDisposed() const
+	namespace Thread
 	{
-		return m_bDisposed;
-	}
-	
-	// Set the disposed status
-	inline void SetDisposed(bool bDisposed)
-	{
-		m_bDisposed = bDisposed;
-	}
+		class WorkThreadContainer
+		{
+		public:
+			// Construct the WorkThreadContainer
+			WorkThreadContainer();
 
-private:
-	// Thread list
-	std::list<MyThread*> m_pWorkList;
+			// Detructe the WorkThreadContainer
+			virtual ~WorkThreadContainer();
 
-	// Disposed status
-	bool m_bDisposed;	
-};
+		private:
+			// Forbid the copy WorkThreadContainer
+			WorkThreadContainer(const WorkThreadContainer& other) {	};
+
+			// Forbid the assigment of WorkThreadContainer
+			WorkThreadContainer& operator=(const WorkThreadContainer& other) { return *this; };
+
+		public:
+			// Add working thread
+			void Add(MyThread* pThread);
+
+			// Remove working thread
+			void Remove(MyThread* pThread);
+
+			// Size of container
+			int GetSize();
+
+			// Is empty
+			bool IsEmpty();
+
+			// Close all threads
+			void CloseAllThread();
+
+		private:
+			// Get the disposed status
+			inline bool GetDisposed() const
+			{
+				return m_bDisposed;
+			}
+
+			// Set the disposed status
+			inline void SetDisposed(bool bDisposed)
+			{
+				m_bDisposed = bDisposed;
+			}
+
+		private:
+			// Thread list
+			std::list<MyThread*> m_pWorkList;
+
+			// Disposed status
+			bool m_bDisposed;
+		};
+	}
+}
 
 #endif // WORKTHREADCONTAINER_H

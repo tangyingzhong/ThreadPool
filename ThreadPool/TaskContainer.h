@@ -16,51 +16,57 @@
 
 #define MAX_TASK_QUEUE 1024
 
-class TaskContainer
+namespace System
 {
-public:
-	// Construct the TaskContainer
-	TaskContainer();
-	
-	// Detructe the TaskContainer
-	virtual ~TaskContainer();
-	
-private:
-	// Forbid the copy TaskContainer
-	TaskContainer(const TaskContainer& other)=delete;
-	
-	// Forbid the assigment of TaskContainer
-	TaskContainer& operator=(const TaskContainer& other)=delete;
-	
-public:
-	// Add task
-	int AddTask(TaskEntry& task);
-
-	// Get a task
-	bool GetOneTask(TaskEntry& task);
-
-	// Is empty
-	bool IsEmpty();
-
-private:
-	// Get the disposed status
-	inline bool GetDisposed() const
+	namespace Thread
 	{
-		return m_bDisposed;
-	}
-	
-	// Set the disposed status
-	inline void SetDisposed(bool bDisposed)
-	{
-		m_bDisposed = bDisposed;
-	}
+		class TaskContainer
+		{
+		public:
+			// Construct the TaskContainer
+			TaskContainer();
 
-private:
-	// Task queue
-	std::queue<TaskEntry> m_TaskQueue;
+			// Detructe the TaskContainer
+			virtual ~TaskContainer();
 
-	// Disposed status
-	bool m_bDisposed;	
-};
+		private:
+			// Forbid the copy TaskContainer
+			TaskContainer(const TaskContainer& other) {	};
+
+			// Forbid the assigment of TaskContainer
+			TaskContainer& operator=(const TaskContainer& other) { return *this; };
+
+		public:
+			// Add task
+			int AddTask(TaskEntry& task);
+
+			// Get a task
+			bool GetOneTask(TaskEntry& task);
+
+			// Is empty
+			bool IsEmpty();
+
+		private:
+			// Get the disposed status
+			inline bool GetDisposed() const
+			{
+				return m_bDisposed;
+			}
+
+			// Set the disposed status
+			inline void SetDisposed(bool bDisposed)
+			{
+				m_bDisposed = bDisposed;
+			}
+
+		private:
+			// Task queue
+			std::queue<TaskEntry> m_TaskQueue;
+
+			// Disposed status
+			bool m_bDisposed;
+		};
+	}
+}
 
 #endif // TASKCONTAINER_H

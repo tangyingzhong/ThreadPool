@@ -1,5 +1,7 @@
 #include "TaskContainer.h"
 
+using namespace System::Thread;
+
 // Construct the TaskContainer
 TaskContainer::TaskContainer():m_bDisposed(false)
 {

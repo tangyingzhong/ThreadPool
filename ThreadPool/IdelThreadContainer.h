@@ -15,91 +15,97 @@
 #include "IThreadPool.h"
 #include "MyThread.h"
 
-class IdelThreadContainer
+namespace System
 {
-public:
-	// Construct the IdelThreadContainer
-	IdelThreadContainer(IThreadPool* pThreadPool,int threadNum);
-	
-	// Detructe the IdelThreadContainer
-	virtual ~IdelThreadContainer();
-	
-private:
-	// Forbid the copy IdelThreadContainer
-	IdelThreadContainer(const IdelThreadContainer& other)=delete;
-	
-	// Forbid the assigment of IdelThreadContainer
-	IdelThreadContainer& operator=(const IdelThreadContainer& other)=delete;
-	
-public:
-	// Is container empty
-	bool IsEmpty();
-
-	// Size of container
-	int GetSize();
-
-	// Add Thread
-	void AddThread(MyThread* pThread);
-
-	// Get top thread
-	MyThread* GetTopThread();
-
-private:
-	// Init the container
-	void Init();
-
-	// Destory the container
-	void Destory();
-
-private:
-	// Get the disposed status
-	inline bool GetDisposed() const
+	namespace Thread
 	{
-		return m_bDisposed;
+		class IdelThreadContainer
+		{
+		public:
+			// Construct the IdelThreadContainer
+			IdelThreadContainer(IThreadPool* pThreadPool, int threadNum);
+
+			// Detructe the IdelThreadContainer
+			virtual ~IdelThreadContainer();
+
+		private:
+			// Forbid the copy IdelThreadContainer
+			IdelThreadContainer(const IdelThreadContainer& other) {	};
+
+			// Forbid the assigment of IdelThreadContainer
+			IdelThreadContainer& operator=(const IdelThreadContainer& other) { return *this; };
+
+		public:
+			// Is container empty
+			bool IsEmpty();
+
+			// Size of container
+			int GetSize();
+
+			// Add Thread
+			void AddThread(MyThread* pThread);
+
+			// Get top thread
+			MyThread* GetTopThread();
+
+		private:
+			// Init the container
+			void Init();
+
+			// Destory the container
+			void Destory();
+
+		private:
+			// Get the disposed status
+			inline bool GetDisposed() const
+			{
+				return m_bDisposed;
+			}
+
+			// Set the disposed status
+			inline void SetDisposed(bool bDisposed)
+			{
+				m_bDisposed = bDisposed;
+			}
+
+			// Get the ThreadPool
+			inline IThreadPool* GetThreadPool() const
+			{
+				return m_pThreadPool;
+			}
+
+			// Set the ThreadPool
+			inline void SetThreadPool(IThreadPool* pThreadPool)
+			{
+				m_pThreadPool = pThreadPool;
+			}
+
+			// Get the ThreadCnt
+			inline int GetThreadCnt() const
+			{
+				return m_iThreadCnt;
+			}
+
+			// Set the ThreadCnt
+			inline void SetThreadCnt(int iThreadCnt)
+			{
+				m_iThreadCnt = iThreadCnt;
+			}
+
+		private:
+			// Thread pool
+			IThreadPool* m_pThreadPool;
+
+			// Thread count
+			int m_iThreadCnt;
+
+			// Thread table
+			std::vector<MyThread*> m_IdelTable;
+
+			// Disposed status
+			bool m_bDisposed;
+		};
 	}
-	
-	// Set the disposed status
-	inline void SetDisposed(bool bDisposed)
-	{
-		m_bDisposed = bDisposed;
-	}
-
-	// Get the ThreadPool
-	inline IThreadPool* GetThreadPool() const
-	{
-		return m_pThreadPool;
-	}
-
-	// Set the ThreadPool
-	inline void SetThreadPool(IThreadPool* pThreadPool)
-	{
-		m_pThreadPool = pThreadPool;
-	}
-
-	// Get the ThreadCnt
-	inline int GetThreadCnt() const
-	{
-		return m_iThreadCnt;
-	}
-
-	// Set the ThreadCnt
-	inline void SetThreadCnt(int iThreadCnt)
-	{
-		m_iThreadCnt = iThreadCnt;
-	}
-
-private:
-	// Thread pool
-	IThreadPool* m_pThreadPool;
-
-	// Thread count
-	int m_iThreadCnt;
-
-	// Thread table
-	std::vector<MyThread*> m_IdelTable;
-
-	// Disposed status
-	bool m_bDisposed;	
-};
+}
 
 #endif // IDELTHREADCONTAINER_H

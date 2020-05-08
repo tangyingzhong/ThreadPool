@@ -1,6 +1,8 @@
 #include <algorithm>
 #include "WorkThreadContainer.h"
 
+using namespace System::Thread;
+
 // Construct the WorkThreadContainer
 WorkThreadContainer::WorkThreadContainer():m_bDisposed(false)
 {
@@ -13,6 +15,24 @@ WorkThreadContainer::~WorkThreadContainer()
 	if (!GetDisposed())
 	{
 		SetDisposed(true);
+	}
+}
+
+// Close all threads
+void WorkThreadContainer::CloseAllThread()
+{
+	for (std::list<MyThread*>::iterator Iter = m_pWorkList.begin();
+		Iter != m_pWorkList.end();
+		++Iter)
+	{
+		MyThread* pThread = *Iter;
+
+		// Force to exit the thread pool
+		pThread->SetIsExitThreadPool(true);
+
+		delete pThread;
+
+		pThread = nullptr;
 	}
 }
 

@@ -1,12 +1,16 @@
 #include <stdio.h>
-#include <unistd.h>
 #include <string>
 #include <sstream>
 #include "MyThread.h"
 
+using namespace System::Thread;
+
 // Construct the MyThread
-MyThread::MyThread(IThreadPool* pThreadPool):m_pThreadPool(pThreadPool),
+MyThread::MyThread(IThreadPool* pThreadPool):
+	m_iThreadId(0),
+	m_pThreadPool(pThreadPool),
 	m_bIsDetached(true),
+	m_bExitThreadPool(false),
 	m_bDisposed(false)
 {
 
@@ -18,6 +22,11 @@ MyThread::~MyThread()
 	if (!GetDisposed())
 	{
 		SetDisposed(true);
+
+		if (m_CurThread.joinable())
+		{
+			m_CurThread.join();
+		}
 	}
 }
 
@@ -30,7 +39,7 @@ void MyThread::SetDetachState(bool bIsDetach)
 // Get thread id
 unsigned long long MyThread::GetThreadId()
 {
-	std::thread::id tid= std::this_thread::get_id();
+	std::thread::id tid = std::this_thread::get_id();
 
 	std::stringstream stream;
 
@@ -38,15 +47,25 @@ unsigned long long MyThread::GetThreadId()
 
 	std::string strThreadId = stream.str();
 
-	unsigned long long threadId= std::stoull(strThreadId);
+	unsigned long long threadId = std::stoull(strThreadId);
 
 	return threadId;
+}
+
+// Set is exit thread pool
+void MyThread::SetIsExitThreadPool(bool bExit)
+{
+	SetExitThreadPool(bExit);
 }
 
 // Run the thread
 void MyThread::Run()
 {
-	m_Task.pFunc(m_Task.pUser);
+	SetId(GetThreadId());
+
+	m_pTask->iThreadId = GetId();
+
+	m_pTask->pFunc(m_pTask->pUserData, GetExitThreadPool());
 
 	// Add current thread to idel container again
 	if (GetThreadPool())

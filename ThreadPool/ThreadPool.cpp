@@ -1,11 +1,15 @@
 #include <mutex>
 #include <thread>
 #include <iostream>
+#include <sstream>
 #include "MyThread.h"
 #include "ThreadPool.h"
 
+using namespace System::Thread;
+
 // Construct the ThreadPool
-ThreadPool::ThreadPool(int threadNum):m_iThreadCnt(threadNum),
+ThreadPool::ThreadPool(int threadNum):
+	m_iThreadCnt(threadNum),
 	m_pIdelContainer(nullptr),
 	m_bStopPool(false),
 	m_bForceStop(false),
@@ -44,6 +48,28 @@ void ThreadPool::DestoryIdelContainer()
 	}
 }
 
+// Destory busy container
+void ThreadPool::DestoryBusyContainer()
+{
+	m_WorkContainer.CloseAllThread();
+}
+
+// Get thread id
+unsigned long long ThreadPool::GetThreadId()
+{
+	std::thread::id tid = std::this_thread::get_id();
+
+	std::stringstream stream;
+
+	stream << tid;
+
+	std::string strThreadId = stream.str();
+
+	unsigned long long threadId = std::stoull(strThreadId);
+
+	return threadId;
+}
+
 // Run the pool
 void ThreadPool::Run()
 {
@@ -53,6 +79,9 @@ void ThreadPool::Run()
 		{
 			if (GetForceStop())
 			{
+				// Destory busy container
+				DestoryBusyContainer();
+
 				// Destory idel container
 				DestoryIdelContainer();
 
@@ -102,7 +131,7 @@ void ThreadPool::Run()
 			continue;
 		}
 
-		std::cout << "Get an idel thread to have the task : "<<std::to_string(pThread->GetId())<< std::endl;
+		std::cout << "Get an idel thread to have the task "<< std::endl;
 
 		std::cout << "Idel container size :" << GetIdelTable()->GetSize() << std::endl;
 
@@ -124,7 +153,7 @@ void ThreadPool::Run()
 		// Start thread
 		StartThread(pThread);
 
-		std::cout << "Start task working:"<< std::to_string(pThread->GetId()) << std::endl;
+		std::cout << "Start task now with thread : "<< std::to_string(pThread->GetId()) << std::endl;
 	}
 }
 
